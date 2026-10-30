@@ -1,0 +1,1834 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#060b18">
+<title>PhishGuard | Cyber Security Experience</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:#060b18;
+  --panel:#0d1830;
+  --cyan:#00e5ff;
+  --blue:#168bff;
+  --purple:#a36cff;
+  --white:#effaff;
+  --muted:#9aacc5;
+  --green:#35e6a0;
+  --red:#ff5577;
+  --yellow:#ffc76b;
+  --line:rgba(140,210,255,.15);
+}
+
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html {scroll-behavior:smooth}
+
+body {
+  background:var(--bg);
+  color:var(--white);
+  font-family:Inter,Arial,sans-serif;
+  overflow-x:hidden;
+}
+
+button,textarea {font:inherit}
+button {cursor:pointer}
+a {text-decoration:none;color:inherit}
+
+/* BACKGROUND ATMOSPHERE */
+
+.background {
+  position:fixed;
+  inset:0;
+  z-index:-5;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 15% 20%,#07304a 0%,transparent 38%),
+    radial-gradient(ellipse at 85% 70%,#241448 0%,transparent 40%),
+    #060b18;
+}
+
+.background::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.035) 1px,transparent 1px);
+  background-size:55px 55px;
+  mask-image:linear-gradient(to bottom,black,transparent 90%);
+}
+
+.ambient {
+  position:fixed;
+  width:400px;
+  height:400px;
+  border-radius:50%;
+  filter:blur(110px);
+  pointer-events:none;
+  z-index:-3;
+  opacity:.22;
+}
+
+.ambient.a {
+  background:#00c8ff;
+  top:5%;
+  left:-200px;
+  animation:ambientMove 14s infinite alternate;
+}
+
+.ambient.b {
+  background:#853fff;
+  right:-200px;
+  bottom:0;
+  animation:ambientMove 17s infinite alternate-reverse;
+}
+
+@keyframes ambientMove {
+  to {transform:translate(180px,100px) scale(1.4)}
+}
+
+#particleCanvas {
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:-2;
+}
+
+/* NAVBAR */
+
+nav {
+  position:sticky;
+  top:0;
+  z-index:100;
+  height:76px;
+  padding:0 7%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:rgba(5,11,25,.78);
+  backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--line);
+}
+
+.logo {
+  font-family:"Space Grotesk",sans-serif;
+  font-weight:800;
+  font-size:25px;
+  color:var(--cyan);
+  letter-spacing:-1px;
+  text-shadow:0 0 20px #00e5ff55;
+}
+
+.logo span {color:white}
+
+.menu-btn {
+  width:46px;
+  height:44px;
+  border-radius:13px;
+  color:var(--cyan);
+  font-size:23px;
+  border:1px solid #00e5ff44;
+  background:rgba(0,229,255,.08);
+  box-shadow:0 0 20px #00e5ff12;
+  transition:.3s;
+}
+
+.menu-btn:hover {
+  background:#00e5ff20;
+  box-shadow:0 0 25px #00e5ff55;
+  transform:rotate(90deg);
+}
+
+.menu {
+  display:none;
+  position:absolute;
+  right:7%;
+  top:66px;
+  width:255px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(10,23,46,.97);
+  border:1px solid #00e5ff33;
+  box-shadow:0 20px 60px #0009,0 0 30px #00e5ff12;
+  backdrop-filter:blur(20px);
+}
+
+.menu.open {
+  display:block;
+  animation:menuEnter .35s ease both;
+}
+
+.menu button {
+  display:block;
+  width:100%;
+  text-align:left;
+  border:0;
+  color:var(--white);
+  background:transparent;
+  padding:14px;
+  border-radius:11px;
+  font-size:14px;
+  transition:.25s;
+}
+
+.menu button:hover {
+  background:linear-gradient(90deg,#00e5ff20,#9b72ff20);
+  color:var(--cyan);
+  padding-left:21px;
+}
+
+@keyframes menuEnter {
+  from {opacity:0;transform:translateY(-15px) scale(.95)}
+  to {opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* PAGE TRANSITIONS */
+
+.page {
+  display:none;
+  min-height:calc(100vh - 76px);
+  padding:75px 8% 95px;
+  transform-origin:center center;
+}
+
+.page.active {
+  display:block;
+  animation:pageEnter .8s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes pageEnter {
+  0% {
+    opacity:0;
+    transform:perspective(1000px) translateY(35px) rotateX(7deg) scale(.97);
+    filter:blur(9px);
+  }
+  100% {
+    opacity:1;
+    transform:perspective(1000px) translateY(0) rotateX(0) scale(1);
+    filter:blur(0);
+  }
+}
+
+/* HERO */
+
+.hero {
+  min-height:650px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:25px;
+}
+
+.hero-content {
+  position:relative;
+  z-index:5;
+}
+
+.eyebrow {
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  border:1px solid #00e5ff55;
+  padding:10px 16px;
+  border-radius:40px;
+  background:#00e5ff0c;
+  color:var(--cyan);
+  font-size:11px;
+  letter-spacing:2px;
+  font-weight:800;
+  box-shadow:0 0 25px #00e5ff12;
+}
+
+.live-dot {
+  width:7px;
+  height:7px;
+  background:var(--green);
+  border-radius:50%;
+  box-shadow:0 0 12px var(--green);
+  animation:blink 1.5s infinite;
+}
+
+@keyframes blink {
+  50% {opacity:.3}
+}
+
+.hero h1 {
+  font-family:"Space Grotesk",sans-serif;
+  font-size:clamp(43px,6vw,76px);
+  line-height:1.04;
+  letter-spacing:-3px;
+  margin:26px 0;
+}
+
+.gradient {
+  background:linear-gradient(100deg,#00e5ff,#68aaff,#b17bff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  background-size:200% auto;
+  animation:gradientFlow 5s linear infinite;
+}
+
+@keyframes gradientFlow {
+  to {background-position:200% center}
+}
+
+.hero-content p {
+  color:var(--muted);
+  line-height:1.9;
+  max-width:520px;
+  font-size:15px;
+}
+
+.hero-buttons {
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  margin-top:32px;
+}
+
+.btn {
+  padding:15px 23px;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:linear-gradient(110deg,#00dfff,#478dff);
+  color:#041222;
+  font-weight:800;
+  box-shadow:0 0 25px #00cfff30,inset 0 1px 1px #ffffff70;
+  transition:.3s;
+}
+
+.btn:hover {
+  transform:translateY(-5px) scale(1.03);
+  box-shadow:0 10px 35px #00cfff55;
+}
+
+.btn.secondary {
+  color:var(--white);
+  background:rgba(12,27,51,.8);
+  border-color:#00e5ff55;
+  box-shadow:none;
+}
+
+.btn.secondary:hover {
+  background:#00e5ff15;
+  border-color:var(--cyan);
+}
+
+/* MAIN 3D SCENE */
+
+.scene {
+  height:570px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  perspective:1400px;
+  transform-style:preserve-3d;
+  isolation:isolate;
+}
+
+.scene-glow {
+  position:absolute;
+  width:290px;
+  height:290px;
+  border-radius:50%;
+  background:#00bfff;
+  filter:blur(110px);
+  opacity:.25;
+  z-index:-1;
+}
+
+.scene-floor {
+  position:absolute;
+  bottom:30px;
+  width:390px;
+  height:100px;
+  border-radius:50%;
+  background:#00cfff;
+  filter:blur(65px);
+  opacity:.16;
+  transform:rotateX(70deg);
+}
+
+.scene-inner {
+  position:relative;
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  transform-style:preserve-3d;
+  transition:transform .15s ease-out;
+}
+
+/* ROTATING 3D RINGS */
+
+.ring {
+  position:absolute;
+  border-radius:50%;
+  border:2px solid transparent;
+  transform-style:preserve-3d;
+  pointer-events:none;
+}
+
+.ring.r1 {
+  width:390px;
+  height:390px;
+  border-top-color:#00e5ff;
+  border-bottom-color:#00e5ff66;
+  box-shadow:0 0 18px #00e5ff22;
+  animation:ringOne 8s linear infinite;
+}
+
+.ring.r2 {
+  width:430px;
+  height:230px;
+  border-left-color:#a36cff;
+  border-right-color:#00e5ff;
+  box-shadow:0 0 20px #a36cff22;
+  animation:ringTwo 11s linear infinite;
+}
+
+.ring.r3 {
+  width:300px;
+  height:470px;
+  border-left-color:#00e5ff88;
+  border-right-color:#a36cff88;
+  animation:ringThree 13s linear infinite;
+}
+
+.ring.r4 {
+  width:460px;
+  height:350px;
+  border-top-color:#a36cff77;
+  border-bottom-color:#00e5ff55;
+  animation:ringFour 17s linear infinite;
+}
+
+@keyframes ringOne {
+  from {transform:rotateX(70deg) rotateZ(0)}
+  to {transform:rotateX(70deg) rotateZ(360deg)}
+}
+
+@keyframes ringTwo {
+  from {transform:rotateY(68deg) rotateZ(0)}
+  to {transform:rotateY(68deg) rotateZ(360deg)}
+}
+
+@keyframes ringThree {
+  from {transform:rotateY(65deg) rotateX(10deg) rotateZ(0)}
+  to {transform:rotateY(65deg) rotateX(10deg) rotateZ(360deg)}
+}
+
+@keyframes ringFour {
+  from {transform:rotateX(35deg) rotateY(35deg) rotateZ(0)}
+  to {transform:rotateX(35deg) rotateY(35deg) rotateZ(-360deg)}
+}
+
+/* 3D SHIELD */
+
+.shield-wrap {
+  position:relative;
+  z-index:10;
+  width:250px;
+  height:290px;
+  transform-style:preserve-3d;
+  animation:shieldHover 5s ease-in-out infinite;
+}
+
+@keyframes shieldHover {
+  0%,100% {
+    transform:translateY(0) rotateY(-10deg) rotateX(5deg);
+  }
+  50% {
+    transform:translateY(-19px) rotateY(10deg) rotateX(-4deg);
+  }
+}
+
+.shield-shadow {
+  position:absolute;
+  inset:15px;
+  transform:translateZ(-35px) scale(1.1);
+  background:linear-gradient(135deg,#00e5ff,#6843ff);
+  clip-path:polygon(50% 0%,95% 16%,90% 68%,50% 100%,10% 68%,5% 16%);
+  filter:blur(18px);
+  opacity:.6;
+}
+
+.shield-back {
+  position:absolute;
+  inset:0;
+  clip-path:polygon(50% 0%,95% 16%,90% 68%,50% 100%,10% 68%,5% 16%);
+  background:linear-gradient(135deg,#b2ffff,#0086d9 45%,#773aff);
+  transform:translateZ(-13px);
+}
+
+.shield-side {
+  position:absolute;
+  inset:7px;
+  clip-path:polygon(50% 0%,95% 16%,90% 68%,50% 100%,10% 68%,5% 16%);
+  background:linear-gradient(145deg,#009bce,#064078 50%,#411d9d);
+  transform:translateZ(0);
+  filter:drop-shadow(0 0 12px #00e5ff);
+}
+
+.shield-main {
+  position:absolute;
+  inset:15px;
+  clip-path:polygon(50% 0%,95% 16%,90% 68%,50% 100%,10% 68%,5% 16%);
+  background:
+    linear-gradient(145deg,rgba(18,50,83,.98),rgba(8,14,37,.99) 55%,rgba(37,22,80,.98));
+  transform:translateZ(13px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.shield-main::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(125deg,transparent 25%,#00e5ff25 48%,transparent 65%);
+  animation:shieldShine 4s infinite;
+}
+
+@keyframes shieldShine {
+  0% {transform:translateX(-120%)}
+  60%,100% {transform:translateX(120%)}
+}
+
+.shield-main::after {
+  content:"";
+  position:absolute;
+  inset:10px;
+  border:1px solid #00e5ff55;
+  clip-path:polygon(50% 0%,95% 16%,90% 68%,50% 100%,10% 68%,5% 16%);
+}
+
+.shield-icon {
+  position:relative;
+  z-index:3;
+  font-size:115px;
+  filter:drop-shadow(0 0 15px #00e5ff) drop-shadow(0 0 35px #007fff);
+  animation:iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  50% {filter:drop-shadow(0 0 25px #00e5ff) drop-shadow(0 0 55px #007fff)}
+}
+
+.shield-label {
+  z-index:3;
+  color:var(--cyan);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:4px;
+  margin-top:5px;
+  text-shadow:0 0 15px var(--cyan);
+}
+
+.shield-core {
+  position:absolute;
+  width:160px;
+  height:160px;
+  background:#00bfff;
+  filter:blur(70px);
+  opacity:.2;
+}
+
+/* FLOATING OBJECTS */
+
+.float-object {
+  position:absolute;
+  z-index:15;
+  width:65px;
+  height:65px;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+  border:1px solid #00e5ff55;
+  border-radius:17px;
+  background:linear-gradient(145deg,#122d4d,#10152e);
+  box-shadow:0 10px 30px #0008,0 0 25px #00e5ff22,inset 0 1px 1px #ffffff22;
+  transform-style:preserve-3d;
+  animation:floatObject 5s ease-in-out infinite;
+}
+
+.obj1 {top:14%;left:9%;animation-delay:.2s}
+.obj2 {top:13%;right:7%;animation-delay:1s}
+.obj3 {bottom:15%;left:8%;animation-delay:1.8s}
+.obj4 {bottom:14%;right:8%;animation-delay:2.5s}
+.obj5 {top:47%;right:0%;animation-delay:1.2s}
+
+@keyframes floatObject {
+  0%,100% {transform:translateY(0) rotateY(0) rotateX(0)}
+  50% {transform:translateY(-22px) rotateY(25deg) rotateX(15deg)}
+}
+
+/* SCAN RAYS */
+
+.scan-line {
+  position:absolute;
+  z-index:12;
+  width:290px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#00e5ff,transparent);
+  box-shadow:0 0 18px #00e5ff;
+  animation:scanLine 4s ease-in-out infinite;
+  opacity:.8;
+}
+
+@keyframes scanLine {
+  0%,100% {top:20%;opacity:0}
+  20% {opacity:1}
+  80% {opacity:1}
+  90% {top:80%;opacity:0}
+}
+
+/* SMALL STATUS TAG */
+
+.status-pill {
+  position:absolute;
+  z-index:20;
+  bottom:6%;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  padding:11px 17px;
+  background:#0b2031dd;
+  border:1px solid #00e5ff55;
+  border-radius:30px;
+  font-size:11px;
+  letter-spacing:1px;
+  color:var(--cyan);
+  box-shadow:0 0 25px #00e5ff20;
+  backdrop-filter:blur(10px);
+}
+
+/* SECTION HEADINGS */
+
+.section-heading {
+  text-align:center;
+  margin:65px 0 35px;
+}
+
+.section-heading h2 {
+  font-family:"Space Grotesk",sans-serif;
+  font-size:clamp(29px,4vw,44px);
+  margin-bottom:12px;
+}
+
+.section-heading p {
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.page-heading {
+  text-align:center;
+  margin-bottom:45px;
+}
+
+.page-heading h1 {
+  font-size:clamp(34px,5vw,53px);
+  margin-bottom:15px;
+}
+
+.page-heading p {
+  color:var(--muted);
+  line-height:1.8;
+}
+
+/* 3D GLASS CARDS */
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  perspective:1200px;
+}
+
+.card {
+  position:relative;
+  padding:29px;
+  border-radius:20px;
+  border:1px solid rgba(100,210,255,.17);
+  background:
+    linear-gradient(145deg,rgba(20,44,75,.75),rgba(9,17,37,.92));
+  box-shadow:
+    0 15px 35px #0004,
+    inset 0 1px 1px #ffffff12;
+  backdrop-filter:blur(16px);
+  transform-style:preserve-3d;
+  transition:border-color .3s,box-shadow .3s;
+  overflow:hidden;
+}
+
+.card::before {
+  content:"";
+  position:absolute;
+  width:200%;
+  height:200%;
+  top:-150%;
+  left:-150%;
+  background:linear-gradient(115deg,transparent 42%,#00e5ff12 50%,transparent 58%);
+  transform:rotate(15deg);
+  transition:.6s;
+  pointer-events:none;
+}
+
+.card:hover::before {
+  top:-40%;
+  left:-40%;
+}
+
+.card:hover {
+  border-color:#00e5ff88;
+  box-shadow:0 25px 55px #0007,0 0 30px #00e5ff1c;
+}
+
+.card-icon {
+  width:65px;
+  height:65px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  font-size:34px;
+  background:linear-gradient(145deg,#123c5b,#211847);
+  border:1px solid #00e5ff44;
+  box-shadow:0 8px 20px #0005,inset 0 1px 1px #ffffff22;
+  transform:translateZ(35px);
+  margin-bottom:23px;
+}
+
+.card h3 {
+  font-family:"Space Grotesk",sans-serif;
+  font-size:20px;
+  margin-bottom:12px;
+  transform:translateZ(25px);
+}
+
+.card p {
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+  transform:translateZ(15px);
+}
+
+/* BUTTON GLOW */
+
+.neon-btn {
+  position:relative;
+  overflow:hidden;
+}
+
+.neon-btn::after {
+  content:"";
+  position:absolute;
+  top:-100%;
+  left:-50%;
+  width:40%;
+  height:300%;
+  background:#ffffff55;
+  transform:rotate(25deg);
+  transition:.5s;
+}
+
+.neon-btn:hover::after {left:130%}
+
+/* SCANNER PANELS */
+
+.scanner-box {
+  max-width:850px;
+  margin:auto;
+  padding:35px;
+  border-radius:24px;
+  border:1px solid #00e5ff30;
+  background:
+    linear-gradient(145deg,rgba(17,37,65,.92),rgba(8,16,34,.96));
+  box-shadow:0 25px 70px #0007,0 0 45px #00e5ff0b;
+  backdrop-filter:blur(20px);
+  transform:perspective(1200px) rotateX(1deg);
+}
+
+.scanner-box h2 {
+  font-size:25px;
+  margin-bottom:20px;
+}
+
+.scanner-box label {
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  margin:20px 0 10px;
+}
+
+.scanner-box textarea {
+  width:100%;
+  min-height:145px;
+  resize:vertical;
+  padding:17px;
+  color:white;
+  background:#060d1c;
+  border:1px solid #294666;
+  border-radius:14px;
+  outline:none;
+  line-height:1.7;
+  transition:.3s;
+}
+
+.scanner-box textarea:focus {
+  border-color:var(--cyan);
+  box-shadow:0 0 25px #00e5ff1e;
+}
+
+.scanner-box .btn {
+  width:100%;
+  margin-top:20px;
+}
+
+.result {
+  display:none;
+  margin-top:25px;
+  padding:24px;
+  background:#071326;
+  border:1px solid #00e5ff44;
+  border-radius:17px;
+  animation:resultIn .5s ease both;
+}
+
+@keyframes resultIn {
+  from {opacity:0;transform:translateY(15px) scale(.97)}
+  to {opacity:1;transform:translateY(0) scale(1)}
+}
+
+.result h3 {
+  font-size:23px;
+  margin-bottom:12px;
+}
+
+.score {
+  font-family:"Space Grotesk",sans-serif;
+  font-size:45px;
+  font-weight:900;
+  margin:10px 0;
+  color:var(--cyan);
+  text-shadow:0 0 20px #00e5ff55;
+}
+
+.result ul {
+  padding-left:22px;
+  color:var(--muted);
+  line-height:2;
+  margin-top:15px;
+}
+
+.safe {color:var(--green)}
+.danger {color:var(--red)}
+.warning {color:var(--yellow)}
+
+.tip-box {
+  margin-top:20px;
+  padding:17px;
+  border-left:3px solid var(--cyan);
+  background:#00e5ff0b;
+  border-radius:8px;
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.notice {
+  max-width:850px;
+  margin:22px auto 0;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+}
+
+/* STEPS */
+
+.steps {
+  max-width:850px;
+  margin:auto;
+  display:grid;
+  gap:20px;
+}
+
+.step {
+  display:flex;
+  align-items:center;
+  gap:22px;
+  padding:22px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:linear-gradient(110deg,#102744,#10142e);
+  box-shadow:0 10px 25px #0004;
+  transition:.3s;
+}
+
+.step:hover {
+  transform:translateX(9px) perspective(700px) rotateY(-3deg);
+  border-color:#00e5ff77;
+  box-shadow:0 15px 35px #00e5ff12;
+}
+
+.step-icon {
+  min-width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  background:linear-gradient(145deg,#075072,#28205a);
+  border:1px solid #00e5ff55;
+  font-size:29px;
+}
+
+.step p {
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+  margin-top:7px;
+}
+
+/* TEAM */
+
+.team-panel {
+  max-width:850px;
+  margin:auto;
+  padding:40px;
+  text-align:center;
+  border-radius:25px;
+  background:linear-gradient(145deg,#122747,#11132d);
+  border:1px solid #00e5ff33;
+  box-shadow:0 25px 70px #0006;
+}
+
+.team-shield {
+  font-size:75px;
+  filter:drop-shadow(0 0 25px #00e5ff77);
+  animation:shieldHover 4s infinite ease-in-out;
+  margin-bottom:20px;
+}
+
+.team-panel .intro {
+  margin:15px auto;
+  line-height:1.9;
+  color:var(--muted);
+}
+
+/* CONTACT */
+
+.contact-panel {
+  max-width:700px;
+  margin:auto;
+  text-align:center;
+  padding:45px 30px;
+  background:linear-gradient(145deg,#132d4b,#12142f);
+  border:1px solid #00e5ff33;
+  border-radius:24px;
+  box-shadow:0 25px 60px #0005;
+}
+
+.contact-icon {
+  font-size:70px;
+  margin-bottom:20px;
+  filter:drop-shadow(0 0 20px #00e5ff55);
+}
+
+/* FOOTER */
+
+footer {
+  padding:30px 7%;
+  text-align:center;
+  color:var(--muted);
+  border-top:1px solid var(--line);
+  background:#050a15;
+  font-size:13px;
+  line-height:2;
+}
+
+footer span {color:var(--cyan)}
+
+/* MOBILE */
+
+@media(max-width:950px) {
+  .hero {
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+
+  .hero-content p {margin:auto}
+  .hero-buttons {justify-content:center}
+  .scene {height:500px}
+  .grid {grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:600px) {
+  nav {padding:0 5%}
+  .page {padding:50px 5% 70px}
+  .hero h1 {letter-spacing:-1.5px}
+  .scene {height:420px;overflow:hidden}
+  .grid {grid-template-columns:1fr}
+  .scanner-box {padding:22px}
+  .ring.r1 {width:290px;height:290px}
+  .ring.r2 {width:320px;height:190px}
+  .ring.r3 {width:230px;height:350px}
+  .ring.r4 {width:340px;height:270px}
+  .shield-wrap {transform:scale(.78)}
+  .float-object {width:49px;height:49px;font-size:23px}
+  .obj1 {left:3%}
+  .obj2 {right:3%}
+  .obj3 {left:3%}
+  .obj4 {right:3%}
+  .obj5 {right:0}
+  .status-pill {font-size:9px}
+  .team-panel {padding:25px 18px}
+  .step {padding:16px;gap:14px}
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="ambient a"></div>
+<div class="ambient b"></div>
+<canvas id="particleCanvas"></canvas>
+
+<!-- NAVIGATION -->
+
+<nav>
+  <a href="#" class="logo" onclick="showPage('home')">
+    🛡️ Phish<span>Guard</span>
+  </a>
+
+  <button class="menu-btn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+
+  <div class="menu" id="menu">
+    <button onclick="showPage('home')">🏠 Home</button>
+    <button onclick="showPage('url')">🔗 URL Scanner</button>
+    <button onclick="showPage('message')">💬 Message Scanner</button>
+    <button onclick="showPage('features')">⚡ Features</button>
+    <button onclick="showPage('tips')">💡 Safety Tips</button>
+    <button onclick="showPage('how')">⚙️ How It Works</button>
+    <button onclick="showPage('about')">👥 About Us</button>
+    <button onclick="showPage('contact')">📩 Contact</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+
+<section class="page active" id="home">
+
+  <div class="hero">
+
+    <div class="hero-content">
+
+      <div class="eyebrow">
+        <span class="live-dot"></span>
+        ADVANCED DIGITAL SAFETY
+      </div>
+
+      <h1>
+        Stay Alert.<br>
+        Stay <span class="gradient">Protected.</span>
+      </h1>
+
+      <p>
+        Welcome to PhishGuard! 🛡️ Your digital safety companion.
+        Identify suspicious links and potentially dangerous messages
+        with our educational security checker. Think before you click! 🚨
+      </p>
+
+      <div class="hero-buttons">
+        <button class="btn neon-btn" onclick="showPage('url')">
+          🔍 Scan a URL
+        </button>
+
+        <button class="btn secondary" onclick="showPage('message')">
+          💬 Check a Message
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 3D CYBER SHIELD -->
+
+    <div class="scene" id="scene">
+
+      <div class="scene-glow"></div>
+      <div class="scene-floor"></div>
+
+      <div class="scene-inner" id="sceneInner">
+
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="ring r4"></div>
+
+        <div class="scan-line"></div>
+
+        <div class="float-object obj1">🔐</div>
+        <div class="float-object obj2">🚨</div>
+        <div class="float-object obj3">💻</div>
+        <div class="float-object obj4">🔍</div>
+        <div class="float-object obj5">⚡</div>
+
+        <div class="shield-wrap" id="shieldWrap">
+
+          <div class="shield-shadow"></div>
+          <div class="shield-back"></div>
+          <div class="shield-side"></div>
+
+          <div class="shield-main">
+            <div class="shield-core"></div>
+            <div class="shield-icon">🛡️</div>
+            <div class="shield-label">PHISHGUARD</div>
+          </div>
+
+        </div>
+
+        <div class="status-pill">
+          ● YOUR DIGITAL DEFENCE SYSTEM
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-heading">
+    <h2>🧠 Your Safety Starts Here</h2>
+    <p>Explore tools designed to help you recognise phishing warning signs.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <h3>URL Scanner</h3>
+      <p>Check web addresses for suspicious structures and common warning patterns.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">📩</div>
+      <h3>Message Scanner</h3>
+      <p>Inspect SMS, emails and chat messages for suspicious language.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🚨</div>
+      <h3>Risk Awareness</h3>
+      <p>Understand possible risks and learn safer digital habits.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- URL SCANNER -->
+
+<section class="page" id="url">
+
+  <div class="page-heading">
+    <h1>🔗 URL <span class="gradient">Scanner</span></h1>
+    <p>Analyse a web address for common suspicious patterns.</p>
+  </div>
+
+  <div class="scanner-box">
+
+    <h2>🔍 Inspect a suspicious link</h2>
+
+    <label for="urlInput">Enter a website address</label>
+
+    <textarea id="urlInput" placeholder="Example: https://example.com"></textarea>
+
+    <button class="btn neon-btn" onclick="scanURL()">
+      🛡️ Scan URL Now
+    </button>
+
+    <div class="result" id="urlResult" aria-live="polite"></div>
+
+  </div>
+
+  <p class="notice">
+    ⚠️ Educational prototype: the scanner uses local rules and does not
+    visit URLs or check a live phishing database.
+  </p>
+
+</section>
+
+<!-- MESSAGE SCANNER -->
+
+<section class="page" id="message">
+
+  <div class="page-heading">
+    <h1>💬 Message <span class="gradient">Scanner</span></h1>
+    <p>Inspect suspicious SMS, emails and chat messages.</p>
+  </div>
+
+  <div class="scanner-box">
+
+    <h2>📨 Inspect a message</h2>
+
+    <label for="messageInput">Paste your message</label>
+
+    <textarea id="messageInput" placeholder="Paste a suspicious message here..."></textarea>
+
+    <button class="btn neon-btn" onclick="scanMessage()">
+      🔍 Analyse Message
+    </button>
+
+    <div class="result" id="messageResult" aria-live="polite"></div>
+
+  </div>
+
+  <p class="notice">
+    🔒 Do not enter real passwords, OTPs, banking details or other private information.
+  </p>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="page" id="features">
+
+  <div class="page-heading">
+    <h1>⚡ Powerful <span class="gradient">Features</span></h1>
+    <p>Discover the tools available in PhishGuard.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <h3>URL Analysis</h3>
+      <p>Checks for IP addresses, shortened links, unusual symbols and suspicious URL patterns.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">💬</div>
+      <h3>Message Analysis</h3>
+      <p>Looks for urgency, prize claims, suspicious requests and common phishing language.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>Risk Score</h3>
+      <p>Displays a score based on the warning signs detected by the checker.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <h3>Easy Explanations</h3>
+      <p>Explains which patterns triggered a warning.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">📱</div>
+      <h3>Responsive Design</h3>
+      <p>Designed for mobile phones, tablets and desktop computers.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🎓</div>
+      <h3>Cyber Awareness</h3>
+      <p>Encourages safer digital habits through understandable examples.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SAFETY TIPS -->
+
+<section class="page" id="tips">
+
+  <div class="page-heading">
+    <h1>💡 Cyber Safety <span class="gradient">Tips</span></h1>
+    <p>Build safer online habits with these simple tips.</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-icon">🔍</div>
+      <h3>Check Before Clicking</h3>
+      <p>Look carefully at website addresses before opening links.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🔑</div>
+      <h3>Protect Passwords</h3>
+      <p>Use strong, unique passwords and never share them with strangers.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🔐</div>
+      <h3>Never Share OTPs</h3>
+      <p>Never disclose an OTP, PIN or banking password to anyone.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🎁</div>
+      <h3>Question Free Offers</h3>
+      <p>Be careful with unexpected prizes, rewards and unbelievable deals.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">📲</div>
+      <h3>Verify the Sender</h3>
+      <p>Contact organisations using their official websites or apps.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h3>Update Your Devices</h3>
+      <p>Install security updates and use trusted security software.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+
+<section class="page" id="how">
+
+  <div class="page-heading">
+    <h1>⚙️ How It <span class="gradient">Works</span></h1>
+    <p>Understand the process behind the PhishGuard checker.</p>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-icon">📥</div>
+      <div>
+        <h3>01. Enter Information</h3>
+        <p>Paste a URL or suspicious message into the appropriate scanner.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">🔎</div>
+      <div>
+        <h3>02. Pattern Checking</h3>
+        <p>The checker examines the input for selected suspicious keywords and URL patterns.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">📊</div>
+      <div>
+        <h3>03. Risk Calculation</h3>
+        <p>Detected warning signs contribute to a rule-based risk score.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-icon">🚨</div>
+      <div>
+        <h3>04. View the Result</h3>
+        <p>You receive a risk category, detected warning signs and safety recommendations.</p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+
+<section class="page" id="about">
+
+  <div class="page-heading">
+    <h1>👥 About <span class="gradient">PhishGuard</span></h1>
+    <p>Making cybersecurity awareness easier to understand.</p>
+  </div>
+
+  <div class="team-panel">
+
+    <div class="team-shield">🛡️</div>
+
+    <h2>Meet Team <span class="gradient">CyberAegis</span></h2>
+
+    <p class="intro">
+      PhishGuard is an educational cybersecurity project designed
+      to help users recognise common phishing warning signs in
+      suspicious links and messages.
+    </p>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>Promote awareness about phishing and online safety.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">💡</div>
+        <h3>Our Goal</h3>
+        <p>Make common security warning signs easier to understand.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3>Our Vision</h3>
+        <p>Encourage responsible and safer digital behaviour.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+
+<section class="page" id="contact">
+
+  <div class="page-heading">
+    <h1>📩 Get in <span class="gradient">Touch</span></h1>
+    <p>Thank you for exploring PhishGuard!</p>
+  </div>
+
+  <div class="contact-panel">
+
+    <div class="contact-icon">💻</div>
+
+    <h2>Team CyberAegis 🛡️</h2>
+
+    <p style="color:var(--muted);line-height:1.9;margin:20px auto;max-width:500px">
+      PhishGuard is an educational cybersecurity project.
+      For feedback or project enquiries, contact your project team
+      through your institution.
+    </p>
+
+    <button class="btn neon-btn" onclick="showPage('home')">
+      🏠 Back to Home
+    </button>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <p>🛡️ <span>PhishGuard</span> | Built by Team CyberAegis 💻</p>
+  <p>Stay Alert. Stay Protected. 🔐</p>
+  <p>Educational prototype — not a substitute for professional security tools.</p>
+</footer>
+
+<script>
+
+/* NAVIGATION */
+
+function toggleMenu() {
+  document.getElementById("menu").classList.toggle("open");
+}
+
+function showPage(id) {
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  const page = document.getElementById(id);
+
+  if (page) {
+    page.classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  document.getElementById("menu").classList.remove("open");
+}
+
+document.addEventListener("click",event => {
+  const menu = document.getElementById("menu");
+  const button = document.querySelector(".menu-btn");
+
+  if (!menu.contains(event.target) && !button.contains(event.target)) {
+    menu.classList.remove("open");
+  }
+});
+
+/* SAFE HTML */
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+/* SCANNER RESULTS */
+
+function makeResult(elementId,score,reasons) {
+
+  const box = document.getElementById(elementId);
+
+  let category;
+  let icon;
+  let colour;
+  let advice;
+
+  if (score >= 60) {
+    category = "High Risk";
+    icon = "🚨";
+    colour = "danger";
+    advice = "Avoid clicking or responding. Verify the content through an official channel.";
+  }
+  else if (score >= 30) {
+    category = "Medium Risk";
+    icon = "⚠️";
+    colour = "warning";
+    advice = "Be cautious. Verify the sender and information independently.";
+  }
+  else {
+    category = "Low Risk";
+    icon = "✅";
+    colour = "safe";
+    advice = "Few selected warning signs were detected. This does not guarantee safety.";
+  }
+
+  box.style.display = "block";
+
+  box.innerHTML = `
+    <h3 class="${colour}">${icon} ${category}</h3>
+
+    <div class="score">${score}/100</div>
+
+    <p style="color:var(--muted)">Rule-based risk score</p>
+
+    <h3 style="font-size:17px;margin-top:22px">
+      🔍 Detected warning signs
+    </h3>
+
+    <ul>
+      ${
+        reasons.map(reason => `<li>${escapeHTML(reason)}</li>`).join("")
+      }
+    </ul>
+
+    <div class="tip-box">
+      💡 <strong>Safety recommendation</strong><br>
+      ${escapeHTML(advice)}
+    </div>
+  `;
+
+  box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* URL SCANNER */
+
+function scanURL() {
+
+  const raw = document.getElementById("urlInput").value.trim();
+
+  if (!raw) {
+    alert("⚠️ Please enter a URL first.");
+    return;
+  }
+
+  let score = 0;
+  const reasons = [];
+  const value = raw.toLowerCase();
+
+  const suspiciousWords = [
+    "login","verify","account","update",
+    "secure","banking","password","free",
+    "gift","prize","claim","wallet"
+  ];
+
+  if (!/^https?:\/\//i.test(raw)) {
+    score += 15;
+    reasons.push("URL does not begin with HTTP or HTTPS.");
+  }
+
+  if (raw.length > 100) {
+    score += 10;
+    reasons.push("Unusually long URL.");
+  }
+
+  if ((raw.match(/-/g)||[]).length >= 3) {
+    score += 10;
+    reasons.push("Multiple hyphens in the address.");
+  }
+
+  if (raw.includes("@")) {
+    score += 25;
+    reasons.push("Contains an @ symbol, which can make URL interpretation confusing.");
+  }
+
+  if (/^https?:\/\/\d{1,3}(\.\d{1,3}){3}/i.test(raw)) {
+    score += 25;
+    reasons.push("Uses an IP address instead of a normal domain name.");
+  }
+
+  if (/bit\.ly|tinyurl\.com|t\.co|cutt\.ly|shorturl\.at/i.test(value)) {
+    score += 20;
+    reasons.push("Uses a recognised URL-shortening service.");
+  }
+
+  if (value.includes("xn--")) {
+    score += 25;
+    reasons.push("Contains an internationalised domain pattern that may need extra checking.");
+  }
+
+  if ((raw.match(/\./g)||[]).length > 4) {
+    score += 10;
+    reasons.push("Contains an unusually large number of dots.");
+  }
+
+  if (suspiciousWords.some(word => value.includes(word))) {
+    score += 15;
+    reasons.push("Contains words commonly used in phishing-themed links.");
+  }
+
+  if (!reasons.length) {
+    reasons.push("No selected suspicious URL patterns were found.");
+  }
+
+  makeResult("urlResult",Math.min(score,100),reasons);
+}
+
+/* MESSAGE SCANNER */
+
+function scanMessage() {
+
+  const raw = document.getElementById("messageInput").value.trim();
+
+  if (!raw) {
+    alert("⚠️ Please enter a message first.");
+    return;
+  }
+
+  const value = raw.toLowerCase();
+
+  let score = 0;
+  const reasons = [];
+
+  const patterns = [
+    {
+      words:["urgent","immediately","act now","within 24 hours","account suspended"],
+      points:20,
+      reason:"Urgent or threatening language detected."
+    },
+    {
+      words:["won a prize","you have won","lottery","claim your reward","congratulations"],
+      points:20,
+      reason:"Unexpected prize or reward language detected."
+    },
+    {
+      words:["verify your account","confirm your account","update your details"],
+      points:20,
+      reason:"Request to verify or update account information."
+    },
+    {
+      words:["otp","password","pin","bank details","card number"],
+      points:25,
+      reason:"Mentions sensitive information such as OTPs, PINs or passwords."
+    },
+    {
+      words:["click here","click the link","open this link","tap here"],
+      points:15,
+      reason:"Encourages the recipient to follow a link."
+    },
+    {
+      words:["limited offer","free gift","cashback","claim now"],
+      points:15,
+      reason:"Uses promotional or reward-based language."
+    },
+    {
+      words:["send money","transfer money","pay immediately"],
+      points:20,
+      reason:"Contains a request for payment or money transfer."
+    }
+  ];
+
+  patterns.forEach(pattern => {
+
+    if (pattern.words.some(word => value.includes(word))) {
+      score += pattern.points;
+      reasons.push(pattern.reason);
+    }
+
+  });
+
+  const urls = raw.match(/https?:\/\/[^\s]+/gi) || [];
+
+  if (urls.length) {
+    score += 10;
+    reasons.push("Contains one or more web links. Verify them independently.");
+  }
+
+  if (!reasons.length) {
+    reasons.push("No selected suspicious message patterns were found.");
+  }
+
+  makeResult("messageResult",Math.min(score,100),reasons);
+}
+
+/* 3D MOUSE PARALLAX */
+
+const scene = document.getElementById("scene");
+const sceneInner = document.getElementById("sceneInner");
+const shieldWrap = document.getElementById("shieldWrap");
+
+if (scene && sceneInner) {
+
+  scene.addEventListener("mousemove",event => {
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const rect = scene.getBoundingClientRect();
+
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    const rotateY = (x - .5) * 24;
+    const rotateX = (.5 - y) * 20;
+
+    sceneInner.style.transform =
+      `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+    shieldWrap.style.animation = "none";
+    shieldWrap.style.transform =
+      `translateY(-5px) rotateX(${rotateX*.8}deg) rotateY(${rotateY*.9}deg)`;
+  });
+
+  scene.addEventListener("mouseleave",() => {
+    sceneInner.style.transform = "";
+    shieldWrap.style.animation = "";
+    shieldWrap.style.transform = "";
+  });
+}
+
+/* 3D CARD TILT */
+
+document.querySelectorAll(".card").forEach(card => {
+
+  card.addEventListener("mousemove",event => {
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const rect = card.getBoundingClientRect();
+
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    const rotateY = (x - .5) * 16;
+    const rotateX = (.5 - y) * 14;
+
+    card.style.transform =
+      `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+  });
+
+  card.addEventListener("mouseleave",() => {
+    card.style.transform = "";
+  });
+});
+
+/* PARTICLE CANVAS */
+
+const canvas = document.getElementById("particleCanvas");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+let width = 0;
+let height = 0;
+
+function resizeCanvas() {
+  const ratio = Math.min(window.devicePixelRatio || 1,2);
+
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+
+  particles = [];
+
+  const count = Math.min(65,Math.floor(width/17));
+
+  for (let i=0;i<count;i++) {
+    particles.push({
+      x:Math.random()*width,
+      y:Math.random()*height,
+      size:Math.random()*1.8+.5,
+      speed:Math.random()*.35+.1,
+      alpha:Math.random()*.55+.15
+    });
+  }
+}
+
+function drawParticles() {
+
+  ctx.clearRect(0,0,width,height);
+
+  particles.forEach(p => {
+
+    p.y -= p.speed;
+
+    if (p.y < -5) {
+      p.y = height+5;
+      p.x = Math.random()*width;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+
+    ctx.fillStyle = `rgba(0,220,255,${p.alpha})`;
+    ctx.shadowColor = "#00dfff";
+    ctx.shadowBlur = 10;
+    ctx.fill();
+
+  });
+
+  ctx.shadowBlur = 0;
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    requestAnimationFrame(drawParticles);
+  }
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  drawParticles();
+}
+
+</script>
+
+</body>
+</html>
